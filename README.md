@@ -48,4 +48,89 @@ you created your machine in a different availability zone to what is set in the
 You can use `aws ec2 describe-instances --debug` to find problems. This is how
 I realised why I was not seeing any results.
 
-## Hello World
+## 01 Hello World
+Terraform is going to look for a `.tf` file within the directory that you are
+running terraform. So to get started we will create a `tf` file and call it
+anything you want as long as it ends with *.tf*
+
+The contents should be similar to following:
+```
+provider "aws" {
+  profile    = "default"
+  region     = "eu-west-2"
+}
+
+resource "aws_instance" "helloworld01" {
+  ami           = "ami-00a1270ce1e007c27"
+  instance_type = "t2.micro"
+}
+```
+
+Once this file is created we can run `terraform init`. This will download the
+lastest plugins that is referenced in your *tf* file. In this case it would be
+the aws provider. If you are unlucky enough to be behind a proxy then you need
+to set bash variables `HTTPS_PROXY` and `HTTP_PROXY` for good measure. The last
+time I checked this terraform were looking for the uppercase variables so if you
+have `https_proxy` set then it won't work.
+
+Next step is to run `terraform plan` which will tell you what terraform intends
+to do but no actually execute. If you are happy with what terraform wants to do
+then you can run `terraform apply`. Be warned though that this will prompt you
+for confirmation. To avoid this hand-holding just add the `-auto-approve` flag
+because you know what you are doing.
+
+Note that if you run `terraform plan` again after a succesfull execution of `terraform apply`
+it will tell you *No changes. Infrastructure is up-to-date.*
+
+Terraform will also have created a `terraform.tfstate` file where it stores the
+*state* of the resources it just created. This allows terraform to consolidate
+your current infrastruture in AWS with what you want to manage via terraform. If
+you thus delete the tfstate file and don't delete the actual resources in AWS,
+you will end up with in the case of this example two new servers.
+
+To verify that something actually happened, you can use the WebGUI and you will
+see the machine created there or alternatively you can run `aws ec2 describe-instances`
+which will give you a list of instances in your default region.
+
+* Q. How/Where do I get a list of AWS regions?
+  A. It would depend on the service you are using and if that service is implemented in a specific region. For example to get a list of regions that supports EC2 you would use `aws ec2  describe-regions --all-regions` or simply `aws ec2  describe-regions` which would give you a list of regions where your account can create ec2 instances. This [AWS Documentation](https://docs.aws.amazon.com/general/latest/gr/rande.html#ec2_region) also provides a definitive list of regions for all *AWS Service Endpoints*
+* Q. Where do I get the ami value from to put in my *tf* file?
+  A.
+* Q. I gave the server a name but in the GUI it is still just a number?
+  A. The name given is the name for the server within your terraform code, but
+     meand exactly nothing to AWS, you are after all just a number. 
+* Q. How do I connect to this server I just build?
+  A. See take 2.
+
+## 02 Hello World, Take 2
+I have successfully created my new machine but how do I connect to it? So perhaps
+you have created a few machines already using the GUI and for previous machines
+you created a key and you selected the key when you created your last machine. Ok
+easy lets just specify the key.
+```
+resource "aws_instance" "helloworld01" {
+  ami           = "ami-00a1270ce1e007c27"
+  instance_type = "t2.micro"
+  key_name      = "testingkey45"
+}
+```
+Great, it creates the machine and even displays the keyname you specified but
+when you ssh to it......... nothing happens. The reason is simple, when you
+compare it against your EC2 instance created with the WebGUI you will notice it
+is part of a default security group. So you can't ssh to your newly created
+machine because it is blocked by default firewalls.
+Lets fix that by adding it to the default security group.
+```
+resource "aws_instance" "helloworld01" {
+  ami             = "ami-00a1270ce1e007c27"
+  instance_type   = "t2.micro"
+  key_name        = "testingkey45"
+  security_groups = ["launch-wizard-5"]
+}
+```
+Now, I am by no means advocating that this is a good idea but it is simple and
+it will get things working. We should really create better security groups and
+it will follow.
+
+Q. What happens if I create the machine with terraform and then modify properties
+   like the security group? Does it update the machine or does it recreate it from scratch?
