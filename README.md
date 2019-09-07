@@ -98,7 +98,7 @@ which will give you a list of instances in your default region.
   A.
 * Q. I gave the server a name but in the GUI it is still just a number?
   A. The name given is the name for the server within your terraform code, but
-     meand exactly nothing to AWS, you are after all just a number. 
+     meand exactly nothing to AWS, you are after all just a number.
 * Q. How do I connect to this server I just build?
   A. See take 2.
 
@@ -134,3 +134,37 @@ it will follow.
 
 Q. What happens if I create the machine with terraform and then modify properties
    like the security group? Does it update the machine or does it recreate it from scratch?
+
+
+## 03 Hello World, Take 3
+We might not want to use a generic or predefined key so, *take 3* goes through
+how you would make use of your own pre-defined sshkey pair.
+
+We add the following snippet to our *tf* file.
+```
+resource "aws_key_pair" "glt-keypair" {
+  public_key = "${file(pathexpand("~/.ssh/glt_rsa.pub"))}"
+}
+```
+There is 3 things to note in the above example:
+1. `"${}"` syntax is terraform's interpolation syntax. See [docs](https://www.terraform.io/docs/configuration-0-11/interpolation.html).
+1. `pathexpand()` is a function that fully expands the path so it can be read everywhere. See [docs](https://www.terraform.io/docs/configuration/functions/pathexpand.html).
+1. `file` is a [function] that will return the contents of the file rather than a link to the file. See [docs](https://www.terraform.io/docs/configuration/functions/file.html).
+
+To connect to this machine:
+```
+ssh -l ec2-user -i ~/.ssh/glt_rsa  <your ip>
+```
+
+The ip can either be obtained from the *terraform.tfstate* file or from the WebUI
+
+
+Q. Does the ordering of terraform resources matter?
+A. No, in this example we defined the key resource after we referenced it in the
+   *aws_instance* resource.
+
+## 04 Variables
+Variables
+en naam van die key
+
+## 05 terraform init

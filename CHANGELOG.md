@@ -1,4 +1,8 @@
 # Changelog
+## [0.0.3] - 2019-09-07
+### Changes
+- Adding example that demonstrates how to make use of your own key and also introduces interpolation and functions
+
 ## [0.0.2] - 2019-09-05
 ### Changes
 - Added two hello world examples 
