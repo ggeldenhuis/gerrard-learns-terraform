@@ -1,4 +1,8 @@
 # Changelog
+## [0.0.5] - 2019-09-07
+### Changes
+- Fixing the index
+
 ## [0.0.4] - 2019-09-07
 ### Changes
 - Adding variable example with some variables split into a seperate file.

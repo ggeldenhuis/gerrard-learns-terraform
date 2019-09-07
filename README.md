@@ -18,9 +18,9 @@ or clarified.
   + [Credentials](#credentials)
   + [Real engineers still use the keyboard(Most of the times)](#real-engineers-still-use-the-keyboard-most-of-the-times-)
 * [01 Hello World](#01-hello-world)
-* [02 Hello World, Take 2](#02-hello-world--take-2)
-* [03 Hello World, Take 3](#03-hello-world--take-3)
-* [04 Variables & Names](#04-variables---names)
+* [02 Hello World, Take 2](#02-hello-world-take-2)
+* [03 Hello World, Take 3](#03-hello-world-take-3)
+* [04 Variables and Names](#04-variables-and-names)
   + [Names](#names)
   + [Variables](#variables)
 * [05 terraform init](#05-terraform-init)
@@ -181,7 +181,7 @@ Q. Does the ordering of terraform resources matter?
 A. No, in this example we defined the key resource after we referenced it in the
    *aws_instance* resource.
 
-## 04 Variables & Names
+## 04 Variables and Names
 ### Names
 The first thing we do is to add a name for the key we created in the previous
 example. You might have noticed the keyname having a terraform generated name
