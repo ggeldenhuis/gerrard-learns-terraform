@@ -7,6 +7,24 @@ interpretation of that documentation and its use with AWS. A lot of behind the
 scenes work is done when using AWS and I want to help clarify and correlate it
 to it's use in AWS.
 
+This document will also point you to the relevant Terraform and AWS documentation
+where applicable.
+
+Please feel free to raise a github issue should you like to see anything improved
+or clarified.
+
+## Index
+* [Speaking to Amazon](#speaking-to-amazon)
+  + [Credentials](#credentials)
+  + [Real engineers still use the keyboard(Most of the times)](#real-engineers-still-use-the-keyboard-most-of-the-times-)
+* [01 Hello World](#01-hello-world)
+* [02 Hello World, Take 2](#02-hello-world--take-2)
+* [03 Hello World, Take 3](#03-hello-world--take-3)
+* [04 Variables & Names](#04-variables---names)
+  + [Names](#names)
+  + [Variables](#variables)
+* [05 terraform init](#05-terraform-init)
+
 ## Speaking to Amazon
 ### Credentials
 You will need to login to the [AWS console](https://console.aws.amazon.com/) to
@@ -163,8 +181,36 @@ Q. Does the ordering of terraform resources matter?
 A. No, in this example we defined the key resource after we referenced it in the
    *aws_instance* resource.
 
-## 04 Variables
-Variables
-en naam van die key
+## 04 Variables & Names
+### Names
+The first thing we do is to add a name for the key we created in the previous
+example. You might have noticed the keyname having a terraform generated name
+like `terraform-20190907083954296400000001` which is not very intelligible.
+The resource will now look like this:
+```
+resource "aws_key_pair" "glt-keypair" {
+  key_name   = "glt-keypair"
+  public_key = "${file(pathexpand("~/.ssh/glt_rsa.pub"))}"
+}
+```
+Where the keyname is whatever you want to call it.
+
+### Variables
+If you remember back you can have multiple *tf* files. We will be putting our
+variables in a separate file called `variables.tf`. The name is not important so
+you could call it `abc.tf` as long as it ends with *.tf* and the name makes
+sense to you.
+
+Terraform's variable documentation can be found [here](https://www.terraform.io/docs/configuration/variables.html).
+
+Variables are declared in a *variable block*
+```
+variable "region" {
+  default = "eu-west-2"
+}
+```
+and can be referenced by using
+* `var.region`
+* or `"${var.region}"`
 
 ## 05 terraform init

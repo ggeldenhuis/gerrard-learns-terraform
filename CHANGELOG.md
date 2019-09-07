@@ -1,4 +1,9 @@
 # Changelog
+## [0.0.4] - 2019-09-07
+### Changes
+- Adding variable example with some variables split into a seperate file.
+- Adding table of contents to make navigation easier.
+
 ## [0.0.3] - 2019-09-07
 ### Changes
 - Adding example that demonstrates how to make use of your own key and also introduces interpolation and functions
